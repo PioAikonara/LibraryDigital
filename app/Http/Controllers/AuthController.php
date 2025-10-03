@@ -28,11 +28,7 @@ class AuthController extends Controller
 
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
-
-            // Normalize role to lowercase string and trim whitespace to avoid
-            // mismatches caused by casing or accidental spaces.
             $role = strtolower(trim((string) Auth::user()->role));
-
             if ($role === 'admin') {
                 return redirect()->route('admin.dashboard')->with('success', 'Welcome back, Admin!');
             } elseif ($role === 'user') {

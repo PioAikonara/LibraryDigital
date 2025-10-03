@@ -31,9 +31,9 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::group(['prefix' => 'borrows', 'as' => 'borrows.'], function () {
         Route::get('/', [BorrowController::class, 'index'])->name('index');
         Route::post('{borrow}/approve', [BorrowController::class, 'approve'])->name('approve');
-        Route::post('{borrow}/return', [BorrowController::class, 'return'])->name('return');
     });
 });
+
 
 // User routes
 Route::middleware(['auth', 'role:user'])->group(function () {
@@ -57,5 +57,13 @@ Route::middleware(['auth'])->group(function () {
 
 // Public routes
 Route::get('/', function () {
-    return view('welcome');
+    if (auth()->check()) {
+        $role = strtolower(trim((string) auth()->user()->role));
+        if ($role === 'admin') {
+            return redirect()->route('admin.dashboard');
+        } elseif ($role === 'user') {
+            return redirect()->route('user.dashboard');
+        }
+    }
+    return redirect()->route('login');
 });
