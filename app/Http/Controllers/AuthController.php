@@ -29,9 +29,13 @@ class AuthController extends Controller
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
 
-            if (Auth::user()->role === 'admin') {
+            // Normalize role to lowercase string and trim whitespace to avoid
+            // mismatches caused by casing or accidental spaces.
+            $role = strtolower(trim((string) Auth::user()->role));
+
+            if ($role === 'admin') {
                 return redirect()->route('admin.dashboard')->with('success', 'Welcome back, Admin!');
-            } elseif (Auth::user()->role === 'user') {
+            } elseif ($role === 'user') {
                 return redirect()->route('user.dashboard')->with('success', 'Welcome back, User!');
             }
         }
@@ -40,7 +44,7 @@ class AuthController extends Controller
             'email' => 'The provided credentials do not match our records.',
         ])->onlyInput('email');
     }
-    public function Register(Request $request)
+    public function register(Request $request)
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
@@ -65,7 +69,7 @@ class AuthController extends Controller
                 ->withInput($request->except('password', 'password_confirmation'));
         }
     }
-    public function Logout(Request $request)
+    public function logout(Request $request)
     {
         $request->session()->invalidate();
         Auth::logout();

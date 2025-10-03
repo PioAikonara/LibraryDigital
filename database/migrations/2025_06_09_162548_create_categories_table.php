@@ -11,15 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // Prevent attempting to create the table twice if another migration
-        // already created it earlier in the sequence.
-        if (!Schema::hasTable('categories')) {
-            Schema::create('categories', function (Blueprint $table) {
-                $table->id();
-                $table->string('name');
-                $table->timestamps();
-            });
-        }
+        Schema::create('categories', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->timestamps();
+        });
     }
 
     /**
@@ -30,3 +26,4 @@ return new class extends Migration
         Schema::dropIfExists('categories');
     }
 };
+

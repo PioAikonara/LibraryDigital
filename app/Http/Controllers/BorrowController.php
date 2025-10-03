@@ -99,7 +99,9 @@ class BorrowController extends Controller
             return back()->withErrors(['error' => 'Invalid borrow status for return!']);
         }
 
-        if ($borrow->user_id !== Auth::id() && !Auth::user()->role === 'admin') {
+        // Allow admins to perform returns for any user; ensure role check
+        // uses correct precedence instead of negating the role string.
+        if ($borrow->user_id !== Auth::id() && Auth::user()->role !== 'admin') {
             return back()->withErrors(['error' => 'Unauthorized action!']);
         }
 
